@@ -2,7 +2,7 @@
 
 This library is meant to be upgrade against the standard PHP function `json_encode()` and `json_decode()`.
 
-By its design `\JSONplus::encode()` and '\JSONplus::decode()` is similar. It ensures the extensions &mdash; the *plus* in *JSONplus* &mdash; to integrate:
+By its design `\JSONplus::encode()` and `\JSONplus::decode()` is similar. It ensures the extensions &mdash; the *plus* in *JSONplus* &mdash; to integrate:
 - PrettyPrinting, and print-fixes like `\/` and e.g. replacing your `"true"` to the boolean `true`.
 - ignoring comments, but allowing them to be in your *json*-file
 - datalists, for the ease of reusing data
@@ -25,7 +25,7 @@ But its real strength comes by `new JSONplus()`. This object encapsules the data
 - `->load()` replaces the dataset, while `->merge()` combines with the existing dataset.
 - `->getByPath()` and `->getByID()` helps you navigate the dataset.
 - `->match()` is the non-static alternative of `\JSONplus::is()`
-- `->validate()` checks the dataset against its schema. NOTE: requires the [JSONplus-schema](https://github.com/JSONplus/JSONplus-schema) extension.
+- `->validate()` checks the dataset against its schema. NOTE: requires the [JSONplus-schema](https://github.com/JSONplus/schema) extension.
 - `->analyse()` is a selective reader.
 - `->process()` is a selective writer.
 
