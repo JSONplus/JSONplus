@@ -1,0 +1,16 @@
+{
+    "name": "jsonplus/jsonplus",
+    "description": "A way to add a plus to your JSON",
+    "type": "library",
+    "require": {
+        "php": "^5.5 || ^7.0"
+    },
+    "license": "apache-2.0",
+    "authors": [
+        {
+            "name": "Sent G. Wierda",
+            "email": "sentwierda@gmail.com"
+        }
+    ],
+	"autoload": {"files":["src/JSONplus.php", "src/JSONplus_Comment.php", "src/JSONplus_JSON.php"]}
+}
