@@ -6,8 +6,8 @@ if(!defined("JSONplus_EOL")){define("JSONplus_EOL", PHP_EOL);}
 if(!defined("JSONplus_TAB")){define("JSONplus_TAB", "\t");}
 if(!defined("JSONplus_SELECTIVE")){define("JSONplus_SELECTIVE", FALSE);}
 
-if(!class_exists('JSONplus\JSON')){ require_once('JSONplus_JSON.php'); }
-if(!class_exists('JSONplus\Comment')){ require_once('JSONplus_Comment.php'); }
+if(!class_exists('JSONplus\JSON') && !defined('COMPOSER')){ require_once('JSONplus_JSON.php'); }
+if(!class_exists('JSONplus\Comment') && !defined('COMPOSER')){ require_once('JSONplus_Comment.php'); }
 
 class JSONplus {
 	const NOT_FOUND_ERROR = NULL;
