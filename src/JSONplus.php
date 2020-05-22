@@ -261,6 +261,68 @@ class JSONplus {
     }
   }
   /***********************************************************
+   * ENCRYPTION *
+   ***********************************************************/
+  public static function encrypt($str, $key=FALSE){
+    if(is_bool($key) && isset($this)){
+      $key = $this->secret;
+    } elseif($key == NULL){
+      return $str;
+    }
+    //$cipher, $key
+    $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
+    $iv = openssl_random_pseudo_bytes($ivlen);
+    $ciphertext_raw = openssl_encrypt($str, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
+    $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+    $ciphertext = base64_encode( $iv.$hmac.$ciphertext_raw );
+    return $ciphertext;
+  }
+  public static function decrypt($ciphertext, $key=FALSE){
+    if(is_bool($key) && isset($this)){
+      $key = $this->secret;
+    }
+    elseif(is_array($key) && isset($this)){
+      $awnser = FALSE;
+      foreach($key as $i=>$k){
+        $b = $this->decrypt($ciphertext, $k);
+        if($b !== FALSE){
+          $awnser = $b;
+          $this->last = $k;
+          $this->hit = array_unique(array_merge($this->hit, array($k)));
+          return $awnser;
+        }
+      }
+      return $awnser;
+    }
+    //$cipher, $key
+    $c = base64_decode($ciphertext);
+    $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
+    $iv = substr($c, 0, $ivlen);
+    if(strlen($iv) < $ivlen){ return FALSE; }
+    $hmac = substr($c, $ivlen, $sha2len=32);
+    $ciphertext_raw = substr($c, $ivlen+$sha2len);
+    $original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
+    $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+    if(FALSE && $ciphertext_raw){ print_r(array(
+      'ciphertext'=>$ciphertext,
+      'c'=>$c,
+      'key'=>$key,
+      'cipher'=>$cipher,
+      'ivlen'=>$ivlen,
+      'iv'=>$iv,
+      'hmac'=>$hmac,
+      'sha2len'=>$sha2len,
+      'ciphertext_raw'=>$ciphertext_raw,
+      'options'=>$options,
+      'original_plaintext'=>$original_plaintext,
+      'calcmac'=>$calcmac
+    ));}
+    if (hash_equals($hmac, $calcmac)){//PHP 5.6+ timing attack safe comparison
+      return $original_plaintext."\n";
+    }
+    return FALSE;
+  }
+  /***********************************************************
    * TYPE VALIDATION AND SCHEMA *
    ***********************************************************/
   static function is($o=FALSE){
