@@ -6,6 +6,9 @@ if(!defined("JSONplus_EOL")){define("JSONplus_EOL", PHP_EOL);}
 if(!defined("JSONplus_TAB")){define("JSONplus_TAB", "\t");}
 if(!defined("JSONplus_SELECTIVE")){define("JSONplus_SELECTIVE", FALSE);}
 
+if(!defined('JSONplus_KEY_LAST')){ define('JSONplus_KEY_LAST', 'last'); ${JSONplus_KEY_LAST} = NULL; }
+if(!defined('JSONplus_KEY_HIT')){ define('JSONplus_KEY_HIT', 'hit'); ${JSONplus_KEY_HIT} = array(); }
+
 if(!class_exists('JSONplus\JSON') && !defined('COMPOSER')){ require_once('JSONplus_JSON.php'); }
 if(!class_exists('JSONplus\Comment') && !defined('COMPOSER')){ require_once('JSONplus_Comment.php'); }
 
@@ -264,7 +267,7 @@ class JSONplus {
    * ENCRYPTION *
    ***********************************************************/
   public static function encrypt($str, $key=FALSE){
-    if(is_bool($key) && isset($this)){
+    if(isset($this) && is_bool($key)){
       $key = $this->secret;
     } elseif($key == NULL){
       return $str;
@@ -278,22 +281,29 @@ class JSONplus {
     return $ciphertext;
   }
   public static function decrypt($ciphertext, $key=FALSE){
-    if(is_bool($key) && isset($this)){
+    if(isset($this) && is_bool($key)){
       $key = $this->secret;
     }
-    elseif(is_array($key) && isset($this)){
+    elseif(is_array($key)){
       $awnser = FALSE;
       foreach($key as $i=>$k){
-        $b = $this->decrypt($ciphertext, $k);
+        $b = (isset($this) ? $this->decrypt($ciphertext, $k) : self::decrypt($ciphertext, $k) );
         if($b !== FALSE){
           $awnser = $b;
-          $this->last = $k;
-          $this->hit = array_unique(array_merge($this->hit, array($k)));
+          if(isset($this)){
+            $this->last = $k;
+            $this->hit = array_unique(array_merge($this->hit, array($k)));
+          } else {
+            global ${JSONplus_KEY_LAST}, ${JSONplus_KEY_HIT};
+            ${JSONplus_KEY_LAST} = $k;
+            ${JSONplus_KEY_HIT} = array_unique(array_merge((is_array(${JSONplus_KEY_HIT}) ? ${JSONplus_KEY_HIT} : array()), array($k)));
+          }
           return $awnser;
         }
       }
       return $awnser;
     }
+    //*debug*/ print_r(array('ciphertext'=>$ciphertext, 'key'=>$key));
     //$cipher, $key
     $c = base64_decode($ciphertext);
     $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
