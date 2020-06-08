@@ -267,11 +267,7 @@ class JSONplus {
    * ENCRYPTION *
    ***********************************************************/
   public static function encrypt($str, $key=FALSE){
-    if(isset($this) && is_bool($key)){
-      $key = $this->secret;
-    } elseif($key == NULL){
-      return $str;
-    }
+    if(isset($this) && is_bool($key)){ $key = $this->secret; } elseif($key == NULL || is_bool($key)){ return $str; }
     //$cipher, $key
     $ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
     $iv = openssl_random_pseudo_bytes($ivlen);
