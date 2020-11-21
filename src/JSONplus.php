@@ -582,7 +582,7 @@ class JSONplus {
   ***********************************************************/
 	static function worker($mode='json'){
     $argv_list = array();
-    if($_SERVER['argc'] > 0 && is_array($_SERVER['argv'])){ //case: php -f worker.php a=1 >> $_GET['a'] = 1
+    if((isset($_SERVER['argc']) ? $_SERVER['argc'] > 0 : TRUE) && (isset($_SERVER['argv']) ? is_array($_SERVER['argv']) : FALSE)){ //case: php -f worker.php a=1 >> $_GET['a'] = 1
       foreach($_SERVER['argv'] as $i=>$par){
         if(preg_match('#^([^=]+)[=](.*)$#', $par, $buffer)){ $_GET[$buffer[1]] = $buffer[2]; }
         else{ $argv_list[$i] = $par; }
