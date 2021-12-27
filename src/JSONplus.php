@@ -579,7 +579,7 @@ class JSONplus {
   * WORKER *
   ***********************************************************/
 	static function worker($mode='json'){
-    $argv_list = array();
+		$argv_list = array();
     if((isset($_SERVER['argc']) ? $_SERVER['argc'] > 0 : TRUE) && (isset($_SERVER['argv']) ? is_array($_SERVER['argv']) : FALSE)){ //case: php -f worker.php a=1 >> $_GET['a'] = 1
       foreach($_SERVER['argv'] as $i=>$par){
         if(preg_match('#^([^=]+)[=](.*)$#', $par, $buffer)){ $_GET[$buffer[1]] = $buffer[2]; }
@@ -587,7 +587,7 @@ class JSONplus {
       }
     }
 
-    if(isset($_GET[JSONplus_FILE_ARGUMENT]) && file_exists($_GET[JSONplus_FILE_ARGUMENT])){ //case: http://../worker.php?file=set.json
+    if(defined('JSONplus_FILE_ARGUMENT') && isset($_GET[JSONplus_FILE_ARGUMENT]) && file_exists($_GET[JSONplus_FILE_ARGUMENT])){ //case: http://../worker.php?file=set.json
 			$raw = file_get_contents($_GET[JSONplus_FILE_ARGUMENT]);
     }
     elseif(isset($argv_list[1]) && file_exists($argv_list[1])){ //case: php -f worker.php set.json
@@ -609,7 +609,7 @@ class JSONplus {
         fclose($fh);
 				$raw = $input;
       }
-      elseif(isset($_POST) && is_array($_POST) && isset($_POST[JSONplus_POST_ARGUMENT]) && is_string($_POST[JSONplus_POST_ARGUMENT])){ //case: http://../worker.php < $_POST['json']
+      elseif(defined('JSONplus_POST_ARGUMENT') && isset($_POST) && is_array($_POST) && isset($_POST[JSONplus_POST_ARGUMENT]) && is_string($_POST[JSONplus_POST_ARGUMENT])){ //case: http://../worker.php < $_POST['json']
 				$raw = $_POST[JSONplus_POST_ARGUMENT];
       }
       else{
@@ -619,8 +619,8 @@ class JSONplus {
       }
     }
 		switch(strtolower($mode)){
-			case 'raw': return $raw; break;
-			case 'json': default: return \JSONplus::decode($raw, TRUE);
+      case 'json': return \JSONplus::decode($raw, TRUE);
+			case 'raw': default: return $raw; break;
 		}
   }
 }
